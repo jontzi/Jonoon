@@ -1,8 +1,8 @@
-# JONO
+# JONOON
 
 Mobiiliystävällinen web-sovellus M Room -liikkeiden julkisen jonotilanteen seurantaan. Kun jonotusaika ylittää käyttäjän määrittämän matka-ajan tai ajan arvioituun saapumiseen, palvelin lähettää web-push-ilmoituksen puhelimeen myös sivun ollessa suljettuna.
 
-JONO on epävirallinen itsenäinen projekti, eikä se ole M Roomin kehittämä tai hyväksymä. Sovellus ei varaa aikaa eikä liity jonoon käyttäjän puolesta.
+JONOON on epävirallinen itsenäinen projekti, eikä se ole M Roomin kehittämä tai hyväksymä. Sovellus ei varaa aikaa eikä liity jonoon käyttäjän puolesta.
 
 ## Toiminnot
 
@@ -75,7 +75,7 @@ VAPID_SUBJECT=mailto:admin@example.com
 
 ## Tailscale
 
-`tailscale-ingress.example.yaml` julkaisee vain JONO-palvelun Tailscale Kubernetes Operatorin kautta. Tuloksena on tyypillisesti `https://jono.<your-tailnet>.ts.net/`. Esimerkki ei sisällä minkään yksittäisen homelabin osoitteita tai muiden palveluiden asetuksia.
+`tailscale-ingress.example.yaml` julkaisee vain JONOON-palvelun Tailscale Kubernetes Operatorin kautta. Tuloksena on tyypillisesti `https://jono.<your-tailnet>.ts.net/`. Esimerkki ei sisällä minkään yksittäisen homelabin osoitteita tai muiden palveluiden asetuksia.
 
 ## Seurantalogiikka
 

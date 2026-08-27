@@ -1,0 +1,115 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jono-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 128Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jono
+  labels:
+    app: jono
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: jono
+  template:
+    metadata:
+      labels:
+        app: jono
+    spec:
+      containers:
+        - name: jono
+          image: jono:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: PORT
+              value: "3000"
+            - name: DATA_DIR
+              value: /app/data
+            - name: POLL_INTERVAL_MS
+              value: "60000"
+            - name: REMINDER_INTERVAL_MS
+              value: "60000"
+            - name: REMINDER_LIMIT
+              value: "3"
+            - name: VAPID_SUBJECT
+              value: mailto:admin@example.com
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: http
+            initialDelaySeconds: 3
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: 20m
+              memory: 48Mi
+            limits:
+              cpu: 300m
+              memory: 192Mi
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: jono-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jono
+spec:
+  selector:
+    app: jono
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+      nodePort: 30003
+  type: NodePort
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: jono
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - jono.home.example
+      secretName: jono-tls
+  rules:
+    - host: jono.home.example
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: jono
+                port:
+                  number: 80

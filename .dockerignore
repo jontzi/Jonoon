@@ -1,0 +1,12 @@
+node_modules
+npm-debug.log
+data
+.git
+.gitignore
+test
+README.md
+k8s.yaml
+tailscale-ingress.example.yaml
+work
+.env
+.env.*

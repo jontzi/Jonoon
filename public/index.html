@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="fi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f8f6ef" />
+  <meta name="description" content="Seuraa valitsemasi M Room -liikkeen jonotilannetta ja saa ilmoitus oikealla hetkellä." />
+  <link rel="manifest" href="/manifest.webmanifest?v=0.3.0" />
+  <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/icon.svg" />
+  <link rel="stylesheet" href="/app.css?v=0.3.0" />
+  <title>JONO</title>
+</head>
+<body>
+  <main class="app-shell">
+    <section class="shop-picker entrance" aria-labelledby="shop-label">
+      <label id="shop-label" for="shop-select">M Room -liike</label>
+      <div class="select-wrap">
+        <select id="shop-select" disabled>
+          <option>Haetaan liikkeitä…</option>
+        </select>
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="shop-meta">
+        <p id="shop-address">Jonotilanne päivittyy hetken kuluttua.</p>
+        <span class="live-state" id="live-state"><i></i><span>Yhdistetään</span></span>
+      </div>
+      <div class="barber-picker" id="barber-picker" hidden>
+        <label for="barber-select">Seurattava jono</label>
+        <div class="barber-select-wrap">
+          <select id="barber-select">
+            <option value="0">Kuka tahansa · lyhin jono</option>
+          </select>
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+    </section>
+
+    <section class="decision entrance delay-2" aria-live="polite">
+      <p class="overline">Suositus nyt</p>
+      <h1 id="decision-title">Hetkinen.</h1>
+      <p class="decision-detail" id="decision-detail">Haetaan ajantasaista jonotilannetta.</p>
+    </section>
+
+    <section class="queue-visual entrance delay-3" aria-label="Jonotilanne">
+      <div class="queue-ring" id="queue-ring">
+        <div class="queue-ring-inner">
+          <strong id="queue-value">–</strong>
+          <span id="queue-unit">min jono</span>
+        </div>
+      </div>
+      <div class="queue-facts">
+        <div><span>Jonossa</span><strong id="clients-value">–</strong></div>
+        <div><span>Partureita</span><strong id="staff-value">–</strong></div>
+      </div>
+    </section>
+
+    <section class="timing-settings entrance delay-4" aria-labelledby="settings-title">
+      <p class="overline">Ajoitus</p>
+      <div class="timing-tabs" role="tablist" aria-label="Ajoitustapa">
+        <button type="button" class="timing-tab active" data-timing-mode="travel" role="tab" aria-selected="true">Matka-aika</button>
+        <button type="button" class="timing-tab" data-timing-mode="arrival" role="tab" aria-selected="false">Saapumisaika</button>
+      </div>
+      <div class="setting-row" id="travel-setting" role="tabpanel">
+        <div class="setting-copy"><strong id="settings-title">Matka-aika parturiin</strong><span>Ilmoita, kun jono vastaa tätä aikaa</span></div>
+        <div class="stepper">
+          <button type="button" data-field="travelMinutes" data-delta="-1" aria-label="Vähennä matka-aikaa">−</button>
+          <output id="travel-value">22 min</output>
+          <button type="button" data-field="travelMinutes" data-delta="1" aria-label="Lisää matka-aikaa">+</button>
+        </div>
+      </div>
+      <div class="setting-row arrival-setting" id="arrival-setting" role="tabpanel" hidden>
+        <div class="setting-copy"><strong>Arvioitu saapumisaika</strong><span id="arrival-hint">Tänään</span></div>
+        <label class="arrival-field">
+          <span class="sr-only">Arvioitu saapumisaika parturille</span>
+          <input type="time" id="arrival-time" step="300" />
+        </label>
+      </div>
+    </section>
+
+    <section class="monitor-section entrance delay-5" aria-labelledby="monitor-title">
+      <button type="button" class="monitor-control" id="monitor-button" aria-pressed="false">
+        <div class="monitor-copy">
+          <div class="monitor-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div><h2 id="monitor-title">Jonoseuranta</h2><p id="monitor-description">Saat ilmoituksen, kun jono vastaa matka-aikaa.</p></div>
+        </div>
+        <span class="monitor-action"><span id="monitor-status">Pois</span><i class="switch" aria-hidden="true"></i></span>
+      </button>
+      <p class="browser-note" id="browser-note" hidden></p>
+    </section>
+
+    <section class="actions entrance delay-5">
+      <a class="primary-action disabled" id="join-link" href="https://my.mroom.com/" target="_blank" rel="noopener">
+        Avaa liikkeen sivu <span>↗</span>
+      </a>
+      <p class="updated" id="updated-value">Automaattinen päivitys minuutin välein</p>
+    </section>
+  </main>
+
+  <div class="permission-gate" id="permission-gate" hidden>
+    <section class="permission-dialog" role="dialog" aria-modal="true" aria-labelledby="permission-title" aria-describedby="permission-description">
+      <div class="permission-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <p class="overline">Ilmoitukset</p>
+      <h2 id="permission-title">Salli JONOn ilmoittaa oikealla hetkellä.</h2>
+      <p id="permission-description">Saat ilmoituksen, kun valitsemasi liikkeen jono ylittää tai alittaa ajoitusrajasi.</p>
+      <button type="button" class="permission-allow" id="permission-allow">Salli ilmoitukset</button>
+      <button type="button" class="permission-later" id="permission-later">Ei nyt</button>
+    </section>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+  <script src="/app.js?v=0.3.0" defer></script>
+</body>
+</html>

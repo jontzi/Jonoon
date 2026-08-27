@@ -1,0 +1,17 @@
+# Requires the Tailscale Kubernetes Operator and an existing Service named jono.
+# The resulting address is typically https://jono.<your-tailnet>.ts.net/.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: jono-tailscale
+  namespace: default
+spec:
+  ingressClassName: tailscale
+  defaultBackend:
+    service:
+      name: jono
+      port:
+        number: 80
+  tls:
+    - hosts:
+        - jono
